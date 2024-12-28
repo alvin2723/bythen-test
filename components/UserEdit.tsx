@@ -12,14 +12,17 @@ import { updateUser } from "@/lib/actions";
 import { Input } from "./ui/Input";
 import { Label } from "./ui/Label";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { revalidatePath } from "next/cache";
-export const UserEdit = ({ user }: { user: User }) => {
+export const UserEdit = ({
+  user,
+  setIsOpened,
+}: {
+  user: User;
+  setIsOpened: (value: boolean) => void;
+}) => {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState<User>(user);
-  const router = useRouter();
 
-  const { mutate, isLoading, isSuccess, isError, error } = useMutation({
+  const { mutate, isPending, isSuccess, isError, error, reset } = useMutation({
     mutationFn: updateUser,
     onSuccess: (updatedUser) => {
       const oldData = queryClient.getQueryData(["users"]);
@@ -42,10 +45,10 @@ export const UserEdit = ({ user }: { user: User }) => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     mutate(formData);
-    revalidatePath("/");
     setTimeout(() => {
-      router.push("/");
-    }, 500);
+      reset();
+      setIsOpened(false);
+    }, 2000);
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -108,10 +111,10 @@ export const UserEdit = ({ user }: { user: User }) => {
         <button
           type="submit"
           className="w-[143px] text-base lg:text-[20px] Lg:leading-[24.2px] py-3 px-2 bg-darkgrey rounded-[10px] mt-4"
-          disabled={isLoading}
+          disabled={isPending}
         >
-          {isLoading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
+          {isPending ? (
+            <Loader2 className="w-4 h-4 animate-spin mx-auto" />
           ) : (
             "Update User"
           )}

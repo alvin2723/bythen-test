@@ -1,13 +1,14 @@
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { Skeleton } from "./ui/Skeleton";
 import { Dialog, DialogTrigger } from "./ui/Dialog";
 import { UserEdit } from "./UserEdit";
 import { User } from "@/lib/types";
 
 export const UserCard = ({ user }: { user: User }) => {
+  const [isOpened, setIsOpened] = useState(false);
   return (
-    <Dialog>
+    <Dialog open={isOpened} onOpenChange={setIsOpened}>
       <DialogTrigger className="px-[10px] mx-auto lg:mx-0 md:px-5 lg:px-[25px] pt-[17px] pb-4 lg:pb-5 bg-grey w-full max-w-[200px] lg:max-w-[256px] h-[263px] flex flex-col items-center">
         <div className="size-[90px] relative">
           <Image
@@ -25,7 +26,7 @@ export const UserCard = ({ user }: { user: User }) => {
           Edit
         </div>
       </DialogTrigger>
-      <UserEdit user={user} />
+      <UserEdit user={user} setIsOpened={setIsOpened} />
     </Dialog>
   );
 };
